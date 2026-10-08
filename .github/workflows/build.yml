@@ -1,0 +1,21 @@
+name: build
+on: [workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Zip ac
+        run: unzip -q umutkankaa.zip
+      - name: Werror kaldir
+        run: sed -i 's/-Werror//g' umutkankaa/src/main/jni/Android.mk
+      - name: Derle
+        run: |
+          $ANDROID_NDK_HOME/ndk-build \
+            NDK_PROJECT_PATH=umutkankaa/src/main \
+            APP_BUILD_SCRIPT=umutkankaa/src/main/jni/Android.mk \
+            NDK_APPLICATION_MK=umutkankaa/src/main/jni/Application.mk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libudawz
+          path: umutkankaa/src/main/libs/arm64-v8a/libudawz.so
